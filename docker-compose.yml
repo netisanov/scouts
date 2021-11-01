@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres
+    volumes:
+      - data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: "database"
+      POSTGRES_USER: "netisanov"
+      POSTGRES_PASSWORD: 'q34502010'
+    ports:
+      - 5432:5432
+
+volumes:
+  data:
