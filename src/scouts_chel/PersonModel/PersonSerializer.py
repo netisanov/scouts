@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from ..models import Gender, Person, Tie, Position
-from dateutil import parser
 
 
 class PersonSerializer(serializers.Serializer):
@@ -38,5 +37,6 @@ class PersonSerializer(serializers.Serializer):
         instance.is_staff = validated_data.get('is_staff', instance.is_staff)
         instance.staff_date = validated_data.get('staff_date', instance.staff_date)
         instance.position = validated_data.get('position', instance.position)
+        instance.clean()
         instance.save()
         return instance

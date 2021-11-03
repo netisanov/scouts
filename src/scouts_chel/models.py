@@ -91,16 +91,27 @@ class Person(BaseModel):
         return full_name
 
     def get_age(self):
-        '''Calculate age of person'''
+        """
+        Calculate age of person
+        """
         birth = self.birthday
         current = datetime.now().date()
         delta = current - birth
         return delta.days // 365
 
     def show_children(self):
-        '''Returns a list of this person's children.'''
+        """
+        Returns a list of this person's children.
+        """
         offspring = self.children_of_mother if self.gender == 'F' else self.children_of_father
         return offspring.order_by('birthday')
+
+    def clean(self):
+        if not self.is_staff:
+            self.staff_date = None
+            self.position = Position.NULL
+        if self.tie == Tie.EMPTY:
+            self.tie_date = None
 
 
 
