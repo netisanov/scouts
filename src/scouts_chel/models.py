@@ -14,8 +14,8 @@ class BaseModel(models.Model):
 
 
 class Gender(models.TextChoices):
-    FEMALE = 'FE', _('Женский')
-    MALE = 'MA', _('Мужской')
+    FEMALE = 'F', _('Женский')
+    MALE = 'M', _('Мужской')
 
 
 class Tie(models.TextChoices):
@@ -44,14 +44,24 @@ class Person(BaseModel):
     name = models.CharField(max_length=30, verbose_name='Имя')
     patronymic = models.CharField(max_length=30, blank=True, null=True, verbose_name='Отчество')
     gender = models.CharField(
-        max_length=2,
+        max_length=1,
         choices=Gender.choices,
         default=Gender.FEMALE,
         verbose_name='Пол'
     )
     birthday = models.DateField(verbose_name='Дата рождения')
-    parents = models.ManyToManyField('self', blank=True, related_name='children', verbose_name='Родители')
-    children = models.ManyToManyField('self', blank=True, related_name='parents', verbose_name='Дети')
+    mother = models.ForeignKey('self',
+                               models.SET_NULL,
+                               blank=True,
+                               null=True,
+                               limit_choices_to={'gender': Gender.FEMALE},
+                               related_name='children_of_mother')
+    father = models.ForeignKey('self',
+                               models.SET_NULL,
+                               blank=True,
+                               null=True,
+                               limit_choices_to={'gender': Gender.MALE},
+                               related_name='children_of_father')
     siblings = models.ManyToManyField('self', blank=True, related_name='siblings', verbose_name='Братья/Сестры')
     tie = models.CharField(
         max_length=2,
@@ -80,14 +90,17 @@ class Person(BaseModel):
             full_name = self.surname + ' ' + self.name
         return full_name
 
-    def get_gender(self):
-        return self.gender
-
     def get_age(self):
+        '''Calculate age of person'''
         birth = self.birthday
         current = datetime.now().date()
         delta = current - birth
         return delta.days // 365
+
+    def show_children(self):
+        '''Returns a list of this person's children.'''
+        offspring = self.children_of_mother if self.gender == 'F' else self.children_of_father
+        return offspring.order_by('birthday')
 
 
 

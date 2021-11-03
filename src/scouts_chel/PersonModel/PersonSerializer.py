@@ -10,8 +10,12 @@ class PersonSerializer(serializers.Serializer):
     patronymic = serializers.CharField(max_length=30)
     birthday = serializers.DateField()
     gender = serializers.ChoiceField(choices=Gender.choices, default=Gender.FEMALE)
-    parents = serializers.HyperlinkedRelatedField(many=True, view_name='person-detail', read_only=True)
-    children = serializers.HyperlinkedRelatedField(many=True, view_name='person-detail', read_only=True)
+    mother = serializers.HyperlinkedRelatedField(view_name='person-detail', read_only=True)
+    father = serializers.HyperlinkedRelatedField(view_name='person-detail', read_only=True)
+    children = serializers.HyperlinkedRelatedField(many=True,
+                                                   view_name='person-detail',
+                                                   read_only=True,
+                                                   source='show_children')
     siblings = serializers.HyperlinkedRelatedField(many=True, view_name='person-detail', read_only=True)
     tie = serializers.ChoiceField(choices=Tie.choices, default=Tie.EMPTY)
     tie_date = serializers.DateField(required=False)
