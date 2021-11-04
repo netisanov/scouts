@@ -18,14 +18,14 @@ class Gender(models.TextChoices):
     MALE = 'M', _('Мужской')
 
 
-class Tie(models.TextChoices):
+class TieChoices(models.TextChoices):
     EMPTY = 'NO', _('Нет галстука')
     BLUE = 'BL', _('Голубой')
     GREEN = 'GR', _('Зеленый')
     YELLOW = 'YE', _('Желтый')
 
 
-class Position(models.TextChoices):
+class PositionChoices(models.TextChoices):
     HELPER = 'HE', _('Помощник вожатого')
     COUNSELOR = 'CO', _('Вожатый')
     EDUCATOR = 'ED', _('Воспитатель')
@@ -37,6 +37,7 @@ class Position(models.TextChoices):
     GUARD = 'GU', _('Охранник')
     MANAGER = 'MA', _('Администратор')
     NULL = 'NU', _('null')
+
 
 
 class Person(BaseModel):
@@ -65,8 +66,8 @@ class Person(BaseModel):
     siblings = models.ManyToManyField('self', blank=True, related_name='siblings', verbose_name='Братья/Сестры')
     tie = models.CharField(
         max_length=2,
-        choices=Tie.choices,
-        default=Tie.EMPTY,
+        choices=TieChoices.choices,
+        default=TieChoices.EMPTY,
         verbose_name='Галстук'
     )
     tie_date = models.DateField(blank=True, null=True, verbose_name='Дата получения галстука')
@@ -74,8 +75,8 @@ class Person(BaseModel):
     staff_date = models.DateField(blank=True, null=True, verbose_name='Дата начала работы')
     position = models.CharField(
         max_length=2,
-        choices=Position.choices,
-        default=Position.NULL,
+        choices=PositionChoices.choices,
+        default=PositionChoices.NULL,
         verbose_name='Должность'
     )
 
@@ -109,8 +110,8 @@ class Person(BaseModel):
     def clean(self):
         if not self.is_staff:
             self.staff_date = None
-            self.position = Position.NULL
-        if self.tie == Tie.EMPTY:
+            self.position = PositionChoices.NULL
+        if self.tie == TieChoices.EMPTY:
             self.tie_date = None
 
 

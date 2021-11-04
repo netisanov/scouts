@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Gender, Person, Tie, Position
+from ..models import Gender, Person, TieChoices, PositionChoices
 
 
 class PersonSerializer(serializers.Serializer):
@@ -16,11 +16,11 @@ class PersonSerializer(serializers.Serializer):
                                                    read_only=True,
                                                    source='show_children')
     siblings = serializers.HyperlinkedRelatedField(many=True, view_name='person-detail', read_only=True)
-    tie = serializers.ChoiceField(choices=Tie.choices, default=Tie.EMPTY)
+    tie = serializers.ChoiceField(choices=TieChoices.choices, default=TieChoices.EMPTY)
     tie_date = serializers.DateField(required=False)
     is_staff = serializers.BooleanField(default=False)
     staff_date = serializers.DateField(required=False)
-    position = serializers.ChoiceField(choices=Position.choices, default=Position.NULL)
+    position = serializers.ChoiceField(choices=PositionChoices.choices, default=PositionChoices.NULL)
     age = serializers.IntegerField(source='get_age', read_only=True)
 
     def create(self, validated_data):
